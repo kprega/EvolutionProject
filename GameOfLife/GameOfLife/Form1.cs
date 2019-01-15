@@ -21,7 +21,7 @@ namespace GameOfLife
 
         private void btn_CreatePlayground_Click(object sender, EventArgs e)
         {
-            playground = new Playground(x: 40, y: 40);
+            playground = new Playground(x: 100, y: 100);
             splitContainer1.Refresh();
         }
 
@@ -49,17 +49,27 @@ namespace GameOfLife
         {
             if (playground != null)
             {
-                var rects = new Rectangle[playground.Width * playground.Height];
-                for (int h = 0; h < playground.Height; h++)
+                var lines = new List<Point[]>();
+                for (int i = 0; i <= playground.Height; i++)
                 {
-                    for (int w = 0; w < playground.Width; w++)
+                    lines.Add(new Point[]
                     {
-                        var pt = new Point(w * playground.CellSize, h * playground.CellSize);
-                        var singleRec = new Rectangle(pt, new Size(playground.CellSize, playground.CellSize));
-                        rects[w + h * playground.Width] = singleRec;
-                    }
+                        new Point(0, i * playground.CellSize),
+                        new Point(playground.Width * playground.CellSize, i * playground.CellSize)
+                    });
                 }
-                e.Graphics.DrawRectangles(new Pen(Color.Silver), rects);
+
+                for (int j = 0; j <= playground.Width; j++)
+                {
+                    lines.Add(new Point[]
+                    {
+                        new Point(j * playground.CellSize, 0),
+                        new Point(j * playground.CellSize, playground.Height * playground.CellSize)
+                    });
+                }
+                var pen = new Pen(Color.Silver);
+                lines.ForEach(x => e.Graphics.DrawLines(pen, x));
+                pen.Dispose();
             }
         }
 
@@ -94,7 +104,7 @@ namespace GameOfLife
             {
                 playground.StepForward();
                 this.Refresh();
-                System.Threading.Thread.Sleep(100);
+                //System.Threading.Thread.Sleep(100);
             }
             st.Stop();
         }
